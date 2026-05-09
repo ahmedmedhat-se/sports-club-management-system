@@ -26,7 +26,7 @@ class Participation {
   }
 
   static async create(data) {
-    const { MemberId, ActivityId, EnrollmentDate } = data;
+    const { MemberId, ActivityId, ParticipationStatus, EnrollmentDate } = data;
     
     const [existing] = await pool.query(
       'SELECT * FROM Participation WHERE MemberId = ? AND ActivityId = ?',
@@ -38,19 +38,19 @@ class Participation {
     }
     
     const [result] = await pool.query(
-      `INSERT INTO Participation (MemberId, ActivityId, EnrollmentDate) 
-       VALUES (?, ?, ?)`,
-      [MemberId, ActivityId, EnrollmentDate]
+      `INSERT INTO Participation (MemberId, ActivityId, ParticipationStatus, EnrollmentDate) 
+       VALUES (?, ?, ?, ?)`,
+      [MemberId, ActivityId, ParticipationStatus || 'Enrolled', EnrollmentDate]
     );
     return result.insertId;
   }
 
   static async update(id, data) {
-    const { ParticipationStatus } = data;
+    const { MemberId, ActivityId, ParticipationStatus, EnrollmentDate } = data;
     
     await pool.query(
-      'UPDATE Participation SET ParticipationStatus = ? WHERE ParticipationId = ?',
-      [ParticipationsStatus, id]
+      'UPDATE Participation SET MemberId = ?, ActivityId = ?, ParticipationStatus = ?, EnrollmentDate = ? WHERE ParticipationId = ?',
+      [MemberId, ActivityId, ParticipationStatus, EnrollmentDate, id]
     );
   }
 
@@ -60,7 +60,7 @@ class Participation {
   }
 
   static async getMembers() {
-    const [rows] = await pool.query('SELECT MemberId, CONCAT(MemberFirstName, " ", MemberLastName) as MemberName FROM Members WHERE MemberStatus = "Active" ORDER BY MemberFirstName');
+    const [rows] = await pool.query('SELECT MemberId, MemberFirstName, MemberLastName FROM Members WHERE MemberStatus = "Active" ORDER BY MemberFirstName');
     return rows;
   }
 
