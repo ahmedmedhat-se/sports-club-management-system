@@ -1,6 +1,6 @@
 # Sports Club Management System
 
-> Developed by **Ahmed Medhat - Lojain MOhammed**
+> Developed by **Ahmed Medhat - Lojain MOhammed - Mohammed Radwan - Youssef Ahmed - Abdelrahman Ashraf**
 
 ---
 ## Project Overview
@@ -11,13 +11,46 @@
 **License:** Proprietary – All rights reserved
 
 ---
+# Web System Screenshots
+## Admin Dashboard
+![Admin Dashboard](./public/web/admin-dashboard.png)
+*admin dashboard interface*
+
+## Members Management
+![Members Management](./public/web/members-management.png)
+*Members management interface*
+
+## Trainers Management
+![Trainers Management](./public/web/trainers-management.png)
+*Trainers management interface*
+
+## Activities Management
+![Activities Management](./public/web/activities-management.png)
+*Activities management interface*
+
+## Facilities Management
+![Facilities Management](./public/web/facilities-management.png)
+*Facilities management interface*
+
+## Schedules Management
+![Schedules Management](./public/web/schedules-management.png)
+*Schedules management interface*
+
+## Reservations Management
+![Reservations Management](./public/web/reservations-management.png)
+*Reservations management interface*
+
+## Participants Management
+![Participants Management](./public/web/participants-management.png)
+*Participants management interface*
+
+---
 ## Project Structure
 ### SPORTS-CLUB-MANAGEMENT-SYSTEM (Node.js)
 ```js
 sports-club-management-system/
 ├── config/
 │   └── db.js
-│
 ├── controllers/
 │   ├── memberController.js
 │   ├── trainerController.js
@@ -27,10 +60,8 @@ sports-club-management-system/
 │   ├── reservationController.js
 │   ├── participationController.js
 │   └── dashboardController.js
-│
 ├── db/
 │   └── schema.sql
-│
 ├── models/
 │   ├── Member.js
 │   ├── Trainer.js
@@ -40,12 +71,10 @@ sports-club-management-system/
 │   ├── Reservation.js
 │   ├── Participation.js
 │   └── Dashboard.js
-│
 ├── public/
 │   ├── css/
 │   │   └── style.css
 │   └── js/
-│
 ├── routes/
 │   ├── memberRoutes.js
 │   ├── trainerRoutes.js
@@ -55,7 +84,6 @@ sports-club-management-system/
 │   ├── reservationRoutes.js
 │   ├── participationRoutes.js
 │   └── dashboardRoutes.js
-│
 ├── views/
 │   ├── partials/
 │   │   ├── header.ejs
@@ -73,7 +101,6 @@ sports-club-management-system/
 │   ├── participations.ejs
 │   ├── 404.ejs
 │   └── error.ejs
-│
 │── .env
 │── .gitignore
 │── app.js
