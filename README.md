@@ -127,7 +127,7 @@ sports-club-management-system/
 | ![MySQL Workbench](https://img.shields.io/badge/MySQL_Workbench-4479A1?style=for-the-badge&logo=mysql&logoColor=white)    | Database Design & Management      | 8.x     |
 
 ---
-## Installation
+## Installation & Initialization
 ## Backend Dependencies
 **Step 1. Setup Express.js Project:**
 ```bash
@@ -140,6 +140,11 @@ npm i -y
 npm install express mysql2 dotenv method-override
 
 npm install --save-dev nodemon
+```
+
+**Step 3: Start the local development server:**
+```bash
+npm start
 ```
 
 ---
