@@ -1,0 +1,234 @@
+<%- include('partials/header') %>
+<%- include('partials/alerts') %>
+
+<% if (action === 'list') { %>
+    <div class="page-header">
+        <h2>Members Management</h2>
+        <a href="/members?action=create" class="btn btn-primary">Add New Member</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Membership</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (members && members.length > 0) { %>
+                    <% members.forEach(m => { %>
+                        <tr>
+                            <td><%= m.MemberId %></td>
+                            <td><%= m.MemberFirstName %> <%= m.MemberLastName %></td>
+                            <td><%= m.MemberEmail %></td>
+                            <td><%= m.MemberPhoneNumber || '-' %></td>
+                            <td><%= m.MembershipTypeName || 'N/A' %></td>
+                            <td><span class="badge badge-<%= m.MemberStatus.toLowerCase() %>"><%= m.MemberStatus %></span></td>
+                            <td><%= m.MemberStartDate ? new Date(m.MemberStartDate).toLocaleDateString() : '-' %></td>
+                            <td class="actions">
+                                <a href="/members?action=edit&id=<%= m.MemberId %>" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="/members/delete?_method=DELETE&id=<%= m.MemberId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this member?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="8" class="text-center">No members found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+<% } else if (action === 'create') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Add New Member</h2>
+                <a href="/members" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/members" method="POST" id="memberForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberFirstName">First Name *</label>
+                        <input type="text" id="MemberFirstName" name="MemberFirstName" required maxlength="50" class="form-control" placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberLastName">Last Name *</label>
+                        <input type="text" id="MemberLastName" name="MemberLastName" required maxlength="50" class="form-control" placeholder="Enter last name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberEmail">Email *</label>
+                        <input type="email" id="MemberEmail" name="MemberEmail" required class="form-control" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberPhoneNumber">Phone</label>
+                        <input type="tel" id="MemberPhoneNumber" name="MemberPhoneNumber" pattern="[0-9+\-\s()]{7,20}" class="form-control" placeholder="+1234567890">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberDateOfBirth">Date of Birth</label>
+                        <input type="date" id="MemberDateOfBirth" name="MemberDateOfBirth" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="MembershipTypeId">Membership Type</label>
+                        <select id="MembershipTypeId" name="MembershipTypeId" class="form-control">
+                            <option value="">Select Membership</option>
+                            <% if (membershipTypes) { %>
+                                <% membershipTypes.forEach(t => { %>
+                                    <option value="<%= t.MembershipTypeId %>"><%= t.MembershipTypeName %></option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberStartDate">Start Date *</label>
+                        <input type="date" id="MemberStartDate" name="MemberStartDate" required class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberEndDate">End Date</label>
+                        <input type="date" id="MemberEndDate" name="MemberEndDate" class="form-control">
+                    </div>
+                </div>
+                <h3 style="margin-top:20px; margin-bottom:15px; color:#555;">Address</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Building">Building</label>
+                        <input type="text" id="Building" name="Building" maxlength="50" class="form-control" placeholder="Building name/number">
+                    </div>
+                    <div class="form-group">
+                        <label for="StreetNo">Street No</label>
+                        <input type="text" id="StreetNo" name="StreetNo" maxlength="50" class="form-control" placeholder="Street number">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="City">City *</label>
+                    <input type="text" id="City" name="City" required maxlength="100" class="form-control" placeholder="Enter city">
+                </div>
+                <div class="form-actions">
+                    <a href="/members" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<% } else if (action === 'edit') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Edit Member #<%= member.MemberId %></h2>
+                <a href="/members" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/members/update?_method=PUT&id=<%= member.MemberId %>" method="POST" id="memberForm">
+                <input type="hidden" name="AddressId" value="<%= member.AddressId %>">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberFirstName">First Name *</label>
+                        <input type="text" id="MemberFirstName" name="MemberFirstName" value="<%= member.MemberFirstName %>" required maxlength="50" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberLastName">Last Name *</label>
+                        <input type="text" id="MemberLastName" name="MemberLastName" value="<%= member.MemberLastName %>" required maxlength="50" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberEmail">Email *</label>
+                        <input type="email" id="MemberEmail" name="MemberEmail" value="<%= member.MemberEmail %>" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberPhoneNumber">Phone</label>
+                        <input type="tel" id="MemberPhoneNumber" name="MemberPhoneNumber" value="<%= member.MemberPhoneNumber || '' %>" pattern="[0-9+\-\s()]{7,20}" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberDateOfBirth">Date of Birth</label>
+                        <input type="date" id="MemberDateOfBirth" name="MemberDateOfBirth" value="<%= member.MemberDateOfBirth ? member.MemberDateOfBirth.split('T')[0] : '' %>" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="MembershipTypeId">Membership Type</label>
+                        <select id="MembershipTypeId" name="MembershipTypeId" class="form-control">
+                            <option value="">Select Membership</option>
+                            <% membershipTypes.forEach(t => { %>
+                                <option value="<%= t.MembershipTypeId %>" <%= member.MembershipTypeId == t.MembershipTypeId ? 'selected' : '' %>><%= t.MembershipTypeName %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MemberStatus">Status</label>
+                        <select id="MemberStatus" name="MemberStatus" class="form-control">
+                            <option value="Active" <%= member.MemberStatus === 'Active' ? 'selected' : '' %>>Active</option>
+                            <option value="Inactive" <%= member.MemberStatus === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                            <option value="Suspended" <%= member.MemberStatus === 'Suspended' ? 'selected' : '' %>>Suspended</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="MemberStartDate">Start Date *</label>
+                        <input type="date" id="MemberStartDate" name="MemberStartDate" value="<%= member.MemberStartDate ? member.MemberStartDate.split('T')[0] : '' %>" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="MemberEndDate">End Date</label>
+                    <input type="date" id="MemberEndDate" name="MemberEndDate" value="<%= member.MemberEndDate ? member.MemberEndDate.split('T')[0] : '' %>" class="form-control">
+                </div>
+                <h3 style="margin-top:20px; margin-bottom:15px; color:#555;">Address</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Building">Building</label>
+                        <input type="text" id="Building" name="Building" value="<%= member.Building || '' %>" maxlength="50" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="StreetNo">Street No</label>
+                        <input type="text" id="StreetNo" name="StreetNo" value="<%= member.StreetNo || '' %>" maxlength="50" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="City">City *</label>
+                    <input type="text" id="City" name="City" value="<%= member.City %>" required maxlength="100" class="form-control">
+                </div>
+                <div class="form-actions">
+                    <a href="/members" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<% } %>
+
+<script>
+document.getElementById('memberForm')?.addEventListener('submit', function(e) {
+    const email = document.getElementById('MemberEmail').value.trim();
+    const firstName = document.getElementById('MemberFirstName').value.trim();
+    const lastName = document.getElementById('MemberLastName').value.trim();
+    
+    if (!firstName || !lastName) {
+        e.preventDefault();
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('Please enter a valid email address');
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

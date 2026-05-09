@@ -1,0 +1,91 @@
+<%- include('partials/header') %>
+<%- include('partials/alerts') %>
+
+<div class="dashboard">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <h3><%= stats.totalMembers %></h3>
+                <p>Total Members</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-info">
+                <h3><%= stats.totalTrainers %></h3>
+                <p>Total Trainers</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⚽</div>
+            <div class="stat-info">
+                <h3><%= stats.totalActivities %></h3>
+                <p>Total Activities</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🏟️</div>
+            <div class="stat-info">
+                <h3><%= stats.totalFacilities %></h3>
+                <p>Total Facilities</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <a href="/members?action=create" class="action-card">
+                <span>➕</span>
+                <h3>Add Member</h3>
+            </a>
+            <a href="/trainers?action=create" class="action-card">
+                <span>➕</span>
+                <h3>Add Trainer</h3>
+            </a>
+            <a href="/activities?action=create" class="action-card">
+                <span>➕</span>
+                <h3>Add Activity</h3>
+            </a>
+            <a href="/reservations?action=create" class="action-card">
+                <span>📅</span>
+                <h3>New Reservation</h3>
+            </a>
+        </div>
+    </div>
+
+    <div class="recent-section">
+        <h2>Recent Reservations</h2>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Facility</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (recentReservations && recentReservations.length > 0) { %>
+                        <% recentReservations.forEach(reservation => { %>
+                            <tr>
+                                <td><%= reservation.MemberName %></td>
+                                <td><%= reservation.FacilityName %></td>
+                                <td><%= new Date(reservation.ReservationDate).toLocaleDateString() %></td>
+                                <td><%= reservation.ReservationStartTime %> - <%= reservation.ReservationEndTime %></td>
+                                <td><span class="badge badge-<%= reservation.ReservationStatus.toLowerCase() %>"><%= reservation.ReservationStatus %></span></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="5" class="text-center">No recent reservations</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,179 @@
+<%- include('partials/header') %>
+<%- include('partials/alerts') %>
+
+<% if (action === 'list') { %>
+    <div class="page-header">
+        <h2>Trainers Management</h2>
+        <a href="/trainers?action=create" class="btn btn-primary">Add New Trainer</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Specialization</th>
+                    <th>Hire Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (trainers && trainers.length > 0) { %>
+                    <% trainers.forEach(trainer => { %>
+                        <tr>
+                            <td><%= trainer.TrainerId %></td>
+                            <td><%= trainer.TrainerFirstName %> <%= trainer.TrainerLastName %></td>
+                            <td><%= trainer.TrainerEmail %></td>
+                            <td><%= trainer.TrainerPhoneNumber || '-' %></td>
+                            <td><%= trainer.SpecializationName || 'General' %></td>
+                            <td><%= new Date(trainer.TrainerHireDate).toLocaleDateString() %></td>
+                            <td><span class="badge badge-<%= trainer.TrainerStatus.toLowerCase() %>"><%= trainer.TrainerStatus %></span></td>
+                            <td class="actions">
+                                <a href="/trainers?action=edit&id=<%= trainer.TrainerId %>" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="/trainers/delete?_method=DELETE&id=<%= trainer.TrainerId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this trainer?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="8" class="text-center">No trainers found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+<% } else if (action === 'create') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Add New Trainer</h2>
+                <a href="/trainers" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/trainers" method="POST" id="trainerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="TrainerFirstName">First Name *</label>
+                        <input type="text" id="TrainerFirstName" name="TrainerFirstName" required maxlength="50" class="form-control" placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerLastName">Last Name *</label>
+                        <input type="text" id="TrainerLastName" name="TrainerLastName" required maxlength="50" class="form-control" placeholder="Enter last name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="TrainerEmail">Email *</label>
+                        <input type="email" id="TrainerEmail" name="TrainerEmail" required class="form-control" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerPhoneNumber">Phone</label>
+                        <input type="tel" id="TrainerPhoneNumber" name="TrainerPhoneNumber" pattern="[0-9+\-\s()]{7,20}" class="form-control" placeholder="+1234567890">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="SpecializationId">Specialization</label>
+                        <select id="SpecializationId" name="SpecializationId" class="form-control">
+                            <option value="">Select Specialization</option>
+                            <% if (specializations) { %>
+                                <% specializations.forEach(spec => { %>
+                                    <option value="<%= spec.SpecializationId %>"><%= spec.SpecializationName %></option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerHireDate">Hire Date *</label>
+                        <input type="date" id="TrainerHireDate" name="TrainerHireDate" required class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="/trainers" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Trainer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<% } else if (action === 'edit') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Edit Trainer #<%= trainer.TrainerId %></h2>
+                <a href="/trainers" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/trainers/update?_method=PUT&id=<%= trainer.TrainerId %>" method="POST" id="trainerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="TrainerFirstName">First Name *</label>
+                        <input type="text" id="TrainerFirstName" name="TrainerFirstName" value="<%= trainer.TrainerFirstName %>" required maxlength="50" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerLastName">Last Name *</label>
+                        <input type="text" id="TrainerLastName" name="TrainerLastName" value="<%= trainer.TrainerLastName %>" required maxlength="50" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="TrainerEmail">Email *</label>
+                        <input type="email" id="TrainerEmail" name="TrainerEmail" value="<%= trainer.TrainerEmail %>" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerPhoneNumber">Phone</label>
+                        <input type="tel" id="TrainerPhoneNumber" name="TrainerPhoneNumber" value="<%= trainer.TrainerPhoneNumber || '' %>" pattern="[0-9+\-\s()]{7,20}" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="SpecializationId">Specialization</label>
+                        <select id="SpecializationId" name="SpecializationId" class="form-control">
+                            <option value="">Select Specialization</option>
+                            <% specializations.forEach(spec => { %>
+                                <option value="<%= spec.SpecializationId %>" <%= trainer.SpecializationId === spec.SpecializationId ? 'selected' : '' %>><%= spec.SpecializationName %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TrainerStatus">Status</label>
+                        <select id="TrainerStatus" name="TrainerStatus" class="form-control">
+                            <option value="Active" <%= trainer.TrainerStatus === 'Active' ? 'selected' : '' %>>Active</option>
+                            <option value="Inactive" <%= trainer.TrainerStatus === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="/trainers" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Trainer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<% } %>
+
+<script>
+document.getElementById('trainerForm')?.addEventListener('submit', function(e) {
+    const email = document.getElementById('TrainerEmail').value.trim();
+    const firstName = document.getElementById('TrainerFirstName').value.trim();
+    const lastName = document.getElementById('TrainerLastName').value.trim();
+    
+    if (!firstName || !lastName) {
+        e.preventDefault();
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('Please enter a valid email address');
+        return;
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

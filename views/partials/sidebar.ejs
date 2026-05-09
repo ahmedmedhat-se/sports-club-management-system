@@ -1,0 +1,39 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h2>🏆 Sports Club</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="/" class="nav-item <%= path === '/' ? 'active' : '' %>">
+            <span class="nav-icon">📊</span>
+            Dashboard
+        </a>
+        <a href="/members" class="nav-item <%= path && path.startsWith('/members') ? 'active' : '' %>">
+            <span class="nav-icon">👥</span>
+            Members
+        </a>
+        <a href="/trainers" class="nav-item <%= path && path.startsWith('/trainers') ? 'active' : '' %>">
+            <span class="nav-icon">👨‍🏫</span>
+            Trainers
+        </a>
+        <a href="/activities" class="nav-item <%= path && path.startsWith('/activities') ? 'active' : '' %>">
+            <span class="nav-icon">⚽</span>
+            Activities
+        </a>
+        <a href="/facilities" class="nav-item <%= path && path.startsWith('/facilities') ? 'active' : '' %>">
+            <span class="nav-icon">🏟️</span>
+            Facilities
+        </a>
+        <a href="/schedules" class="nav-item <%= path && path.startsWith('/schedules') ? 'active' : '' %>">
+            <span class="nav-icon">📅</span>
+            Schedules
+        </a>
+        <a href="/reservations" class="nav-item <%= path && path.startsWith('/reservations') ? 'active' : '' %>">
+            <span class="nav-icon">📝</span>
+            Reservations
+        </a>
+        <a href="/participations" class="nav-item <%= path && path.startsWith('/participations') ? 'active' : '' %>">
+            <span class="nav-icon">✅</span>
+            Participations
+        </a>
+    </nav>
+</aside>

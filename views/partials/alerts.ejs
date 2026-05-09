@@ -1,0 +1,15 @@
+<% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <span><%= success %></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error">
+        <span class="alert-icon">❌</span>
+        <span><%= error %></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+<% } %>

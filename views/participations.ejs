@@ -1,0 +1,198 @@
+<%- include('partials/header') %>
+    <%- include('partials/alerts') %>
+
+        <% if (action==='list' ) { %>
+            <div class="page-header">
+                <h2>Participations Management</h2>
+                <a href="/participations?action=create" class="btn btn-primary">Add New Participation</a>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Member</th>
+                            <th>Activity</th>
+                            <th>Status</th>
+                            <th>Enrollment Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (participations && participations.length> 0) { %>
+                            <% participations.forEach(p=> { %>
+                                <tr>
+                                    <td>
+                                        <%= p.ParticipationId %>
+                                    </td>
+                                    <td>
+                                        <%= p.MemberName %>
+                                    </td>
+                                    <td>
+                                        <%= p.ActivityName %>
+                                    </td>
+                                    <td><span class="badge badge-<%= p.ParticipationStatus.toLowerCase() %>">
+                                            <%= p.ParticipationStatus %>
+                                        </span></td>
+                                    <td>
+                                        <%= new Date(p.EnrollmentDate).toLocaleDateString() %>
+                                    </td>
+                                    <td class="actions">
+                                        <a href="/participations?action=edit&id=<%= p.ParticipationId %>"
+                                            class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="/participations/delete?_method=DELETE&id=<%= p.ParticipationId %>"
+                                            method="POST" style="display:inline;"
+                                            onsubmit="return confirm('Delete this participation?')">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center">No participations found</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <% } else if (action==='create' ) { %>
+                <div class="form-container">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <h2>Add New Participation</h2>
+                            <a href="/participations" class="btn btn-secondary">Back</a>
+                        </div>
+                        <form action="/participations" method="POST" id="participationForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="MemberId">Member *</label>
+                                    <select id="MemberId" name="MemberId" required class="form-control">
+                                        <option value="">Select Member</option>
+                                        <% if (members) { %>
+                                            <% members.forEach(m=> { %>
+                                                <option value="<%= m.MemberId %>">
+                                                    <%= m.MemberFirstName %>
+                                                        <%= m.MemberLastName %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ActivityId">Activity *</label>
+                                    <select id="ActivityId" name="ActivityId" required class="form-control">
+                                        <option value="">Select Activity</option>
+                                        <% if (activities) { %>
+                                            <% activities.forEach(a=> { %>
+                                                <option value="<%= a.ActivityId %>">
+                                                    <%= a.ActivityName %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="EnrollmentDate">Enrollment Date *</label>
+                                    <input type="date" id="EnrollmentDate" name="EnrollmentDate" required
+                                        class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ParticipationStatus">Status</label>
+                                    <select id="ParticipationStatus" name="ParticipationStatus" class="form-control">
+                                        <option value="Active">Active</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Dropped">Dropped</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <a href="/participations" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save Participation</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <% } else if (action==='edit' ) { %>
+                    <div class="form-container">
+                        <div class="form-card">
+                            <div class="form-header">
+                                <h2>Edit Participation #<%= participation.ParticipationId %>
+                                </h2>
+                                <a href="/participations" class="btn btn-secondary">Back</a>
+                            </div>
+                            <form action="/participations/update?_method=PUT&id=<%= participation.ParticipationId %>"
+                                method="POST" id="participationForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="MemberId">Member *</label>
+                                        <select id="MemberId" name="MemberId" required class="form-control">
+                                            <option value="">Select Member</option>
+                                            <% members.forEach(m=> { %>
+                                                <option value="<%= m.MemberId %>" <%=participation.MemberId===m.MemberId
+                                                    ? 'selected' : '' %>><%= m.MemberFirstName %>
+                                                        <%= m.MemberLastName %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ActivityId">Activity *</label>
+                                        <select id="ActivityId" name="ActivityId" required class="form-control">
+                                            <option value="">Select Activity</option>
+                                            <% activities.forEach(a=> { %>
+                                                <option value="<%= a.ActivityId %>"
+                                                    <%=participation.ActivityId===a.ActivityId ? 'selected' : '' %>><%=
+                                                        a.ActivityName %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="EnrollmentDate">Enrollment Date *</label>
+                                        <input type="date" id="EnrollmentDate" name="EnrollmentDate"
+                                            value="<%= new Date(participation.EnrollmentDate).toISOString().split('T')[0] %>"
+                                            required class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ParticipationStatus">Status</label>
+                                        <select id="ParticipationStatus" name="ParticipationStatus"
+                                            class="form-control">
+                                            <option value="Active" <%=participation.ParticipationStatus==='Active'
+                                                ? 'selected' : '' %>>Active</option>
+                                            <option value="Completed" <%=participation.ParticipationStatus==='Completed'
+                                                ? 'selected' : '' %>>Completed</option>
+                                            <option value="Dropped" <%=participation.ParticipationStatus==='Dropped'
+                                                ? 'selected' : '' %>>Dropped</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <a href="/participations" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Update Participation</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <script>
+                            document.getElementById('participationForm')?.addEventListener('submit', function (e) {
+                                const memberId = document.getElementById('MemberId').value;
+                                const activityId = document.getElementById('ActivityId').value;
+
+                                if (!memberId || !activityId) {
+                                    e.preventDefault();
+                                    alert('Please select both member and activity');
+                                }
+                            });
+                        </script>
+
+                        <%- include('partials/footer') %>

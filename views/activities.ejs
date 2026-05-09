@@ -1,0 +1,147 @@
+<%- include('partials/header') %>
+<%- include('partials/alerts') %>
+
+<% if (action === 'list') { %>
+    <div class="page-header">
+        <h2>Activities Management</h2>
+        <a href="/activities?action=create" class="btn btn-primary">Add New Activity</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Duration</th>
+                    <th>Price</th>
+                    <th>Difficulty</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (activities && activities.length > 0) { %>
+                    <% activities.forEach(activity => { %>
+                        <tr>
+                            <td><%= activity.ActivityId %></td>
+                            <td><%= activity.ActivityName %></td>
+                            <td><%= activity.ActivityDescription?.substring(0, 50) || '-' %>...</td>
+                            <td><%= activity.ActivityDuration || '-' %></td>
+                            <td>$<%= activity.ActivityPrice || '0' %></td>
+                            <td><span class="badge badge-info"><%= activity.ActivityDifficultyLevel || 'N/A' %></span></td>
+                            <td class="actions">
+                                <a href="/activities?action=edit&id=<%= activity.ActivityId %>" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="/activities/delete?_method=DELETE&id=<%= activity.ActivityId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this activity?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="7" class="text-center">No activities found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+<% } else if (action === 'create') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Add New Activity</h2>
+                <a href="/activities" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/activities" method="POST" id="activityForm">
+                <div class="form-group">
+                    <label for="ActivityName">Activity Name *</label>
+                    <input type="text" id="ActivityName" name="ActivityName" required maxlength="100" class="form-control" placeholder="Enter activity name">
+                </div>
+                <div class="form-group">
+                    <label for="ActivityDescription">Description</label>
+                    <textarea id="ActivityDescription" name="ActivityDescription" rows="3" maxlength="500" class="form-control" placeholder="Enter description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ActivityDuration">Duration (minutes)</label>
+                        <input type="number" id="ActivityDuration" name="ActivityDuration" min="1" max="480" class="form-control" placeholder="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="ActivityPrice">Price ($)</label>
+                        <input type="number" id="ActivityPrice" name="ActivityPrice" min="0" step="0.01" class="form-control" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ActivityDifficultyLevel">Difficulty Level</label>
+                    <select id="ActivityDifficultyLevel" name="ActivityDifficultyLevel" class="form-control">
+                        <option value="">Select Level</option>
+                        <% if (difficultyLevels) { %>
+                            <% difficultyLevels.forEach(level => { %>
+                                <option value="<%= level %>"><%= level %></option>
+                            <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <a href="/activities" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<% } else if (action === 'edit') { %>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Edit Activity #<%= activity.ActivityId %></h2>
+                <a href="/activities" class="btn btn-secondary">Back</a>
+            </div>
+            <form action="/activities/update?_method=PUT&id=<%= activity.ActivityId %>" method="POST" id="activityForm">
+                <div class="form-group">
+                    <label for="ActivityName">Activity Name *</label>
+                    <input type="text" id="ActivityName" name="ActivityName" value="<%= activity.ActivityName %>" required maxlength="100" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="ActivityDescription">Description</label>
+                    <textarea id="ActivityDescription" name="ActivityDescription" rows="3" maxlength="500" class="form-control"><%= activity.ActivityDescription || '' %></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ActivityDuration">Duration (minutes)</label>
+                        <input type="number" id="ActivityDuration" name="ActivityDuration" value="<%= activity.ActivityDuration || '' %>" min="1" max="480" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="ActivityPrice">Price ($)</label>
+                        <input type="number" id="ActivityPrice" name="ActivityPrice" value="<%= activity.ActivityPrice || '' %>" min="0" step="0.01" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ActivityDifficultyLevel">Difficulty Level</label>
+                    <select id="ActivityDifficultyLevel" name="ActivityDifficultyLevel" class="form-control">
+                        <option value="">Select Level</option>
+                        <% difficultyLevels.forEach(level => { %>
+                            <option value="<%= level %>" <%= activity.ActivityDifficultyLevel === level ? 'selected' : '' %>><%= level %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <a href="/activities" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<% } %>
+
+<script>
+document.getElementById('activityForm')?.addEventListener('submit', function(e) {
+    const name = document.getElementById('ActivityName').value.trim();
+    if (!name) {
+        e.preventDefault();
+        alert('Activity name is required');
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

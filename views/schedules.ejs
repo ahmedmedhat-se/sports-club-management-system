@@ -1,0 +1,286 @@
+<%- include('partials/header') %>
+    <%- include('partials/alerts') %>
+
+        <% if (action==='list' ) { %>
+            <div class="page-header">
+                <h2>Schedules Management</h2>
+                <a href="/schedules?action=create" class="btn btn-primary">Add New Schedule</a>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Activity</th>
+                            <th>Facility</th>
+                            <th>Trainer</th>
+                            <th>Day</th>
+                            <th>Time</th>
+                            <th>Period</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (schedules && schedules.length> 0) { %>
+                            <% schedules.forEach(schedule=> { %>
+                                <tr>
+                                    <td>
+                                        <%= schedule.ScheduleId %>
+                                    </td>
+                                    <td>
+                                        <%= schedule.ActivityName %>
+                                    </td>
+                                    <td>
+                                        <%= schedule.FacilityName %>
+                                    </td>
+                                    <td>
+                                        <%= schedule.TrainerName || 'Unassigned' %>
+                                    </td>
+                                    <td>
+                                        <%= schedule.ScheduleDayOfWeek %>
+                                    </td>
+                                    <td>
+                                        <%= schedule.ScheduleStartTime %> - <%= schedule.ScheduleEndTime %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(schedule.ScheduleStartDate).toLocaleDateString() %> - <%= new
+                                                Date(schedule.ScheduleEndDate).toLocaleDateString() %>
+                                    </td>
+                                    <td class="actions">
+                                        <a href="/schedules?action=edit&id=<%= schedule.ScheduleId %>"
+                                            class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="/schedules/delete?_method=DELETE&id=<%= schedule.ScheduleId %>"
+                                            method="POST" style="display:inline;"
+                                            onsubmit="return confirm('Delete this schedule?')">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="8" class="text-center">No schedules found</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <% } else if (action==='create' ) { %>
+                <div class="form-container">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <h2>Add New Schedule</h2>
+                            <a href="/schedules" class="btn btn-secondary">Back</a>
+                        </div>
+                        <form action="/schedules" method="POST" id="scheduleForm">
+                            <div class="form-group">
+                                <label for="ActivityId">Activity *</label>
+                                <select id="ActivityId" name="ActivityId" required class="form-control">
+                                    <option value="">Select Activity</option>
+                                    <% if (activities) { %>
+                                        <% activities.forEach(activity=> { %>
+                                            <option value="<%= activity.ActivityId %>">
+                                                <%= activity.ActivityName %>
+                                            </option>
+                                            <% }) %>
+                                                <% } %>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="FacilityId">Facility *</label>
+                                    <select id="FacilityId" name="FacilityId" required class="form-control">
+                                        <option value="">Select Facility</option>
+                                        <% if (facilities) { %>
+                                            <% facilities.forEach(facility=> { %>
+                                                <option value="<%= facility.FacilityId %>">
+                                                    <%= facility.FacilityName %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="TrainerId">Trainer</label>
+                                    <select id="TrainerId" name="TrainerId" class="form-control">
+                                        <option value="">Select Trainer</option>
+                                        <% if (trainers) { %>
+                                            <% trainers.forEach(trainer=> { %>
+                                                <option value="<%= trainer.TrainerId %>">
+                                                    <%= trainer.TrainerName %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ScheduleDayOfWeek">Day of Week *</label>
+                                    <select id="ScheduleDayOfWeek" name="ScheduleDayOfWeek" required
+                                        class="form-control">
+                                        <option value="">Select Day</option>
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thursday">Thursday</option>
+                                        <option value="Friday">Friday</option>
+                                        <option value="Saturday">Saturday</option>
+                                        <option value="Sunday">Sunday</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ScheduleStartTime">Start Time</label>
+                                    <input type="time" id="ScheduleStartTime" name="ScheduleStartTime" value="08:00"
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ScheduleEndTime">End Time</label>
+                                    <input type="time" id="ScheduleEndTime" name="ScheduleEndTime" value="09:00"
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ScheduleStartDate">Start Date *</label>
+                                    <input type="date" id="ScheduleStartDate" name="ScheduleStartDate" required
+                                        class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ScheduleEndDate">End Date *</label>
+                                    <input type="date" id="ScheduleEndDate" name="ScheduleEndDate" required
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <a href="/schedules" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save Schedule</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <% } else if (action==='edit' ) { %>
+                    <div class="form-container">
+                        <div class="form-card">
+                            <div class="form-header">
+                                <h2>Edit Schedule #<%= schedule.ScheduleId %>
+                                </h2>
+                                <a href="/schedules" class="btn btn-secondary">Back</a>
+                            </div>
+                            <form action="/schedules/update?_method=PUT&id=<%= schedule.ScheduleId %>" method="POST"
+                                id="scheduleForm">
+                                <div class="form-group">
+                                    <label for="ActivityId">Activity *</label>
+                                    <select id="ActivityId" name="ActivityId" required class="form-control">
+                                        <option value="">Select Activity</option>
+                                        <% activities.forEach(activity=> { %>
+                                            <option value="<%= activity.ActivityId %>"
+                                                <%=schedule.ActivityId===activity.ActivityId ? 'selected' : '' %>><%=
+                                                    activity.ActivityName %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="FacilityId">Facility *</label>
+                                        <select id="FacilityId" name="FacilityId" required class="form-control">
+                                            <option value="">Select Facility</option>
+                                            <% facilities.forEach(facility=> { %>
+                                                <option value="<%= facility.FacilityId %>"
+                                                    <%=schedule.FacilityId===facility.FacilityId ? 'selected' : '' %>>
+                                                    <%= facility.FacilityName %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="TrainerId">Trainer</label>
+                                        <select id="TrainerId" name="TrainerId" class="form-control">
+                                            <option value="">Select Trainer</option>
+                                            <% trainers.forEach(trainer=> { %>
+                                                <option value="<%= trainer.TrainerId %>"
+                                                    <%=schedule.TrainerId===trainer.TrainerId ? 'selected' : '' %>><%=
+                                                        trainer.TrainerName %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="ScheduleDayOfWeek">Day of Week *</label>
+                                        <select id="ScheduleDayOfWeek" name="ScheduleDayOfWeek" required
+                                            class="form-control">
+                                            <option value="">Select Day</option>
+                                            <%
+                                                ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(day=>
+                                                { %>
+                                                <option value="<%= day %>" <%=schedule.ScheduleDayOfWeek===day
+                                                    ? 'selected' : '' %>><%= day %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="ScheduleStartTime">Start Time</label>
+                                        <input type="time" id="ScheduleStartTime" name="ScheduleStartTime"
+                                            value="<%= schedule.ScheduleStartTime %>" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ScheduleEndTime">End Time</label>
+                                        <input type="time" id="ScheduleEndTime" name="ScheduleEndTime"
+                                            value="<%= schedule.ScheduleEndTime %>" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="ScheduleStartDate">Start Date *</label>
+                                        <input type="date" id="ScheduleStartDate" name="ScheduleStartDate"
+                                            value="<%= new Date(schedule.ScheduleStartDate).toISOString().split('T')[0] %>"
+                                            required class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ScheduleEndDate">End Date *</label>
+                                        <input type="date" id="ScheduleEndDate" name="ScheduleEndDate"
+                                            value="<%= new Date(schedule.ScheduleEndDate).toISOString().split('T')[0] %>"
+                                            required class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <a href="/schedules" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Update Schedule</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <script>
+                            document.getElementById('scheduleForm')?.addEventListener('submit', function (e) {
+                                const startTime = document.getElementById('ScheduleStartTime').value;
+                                const endTime = document.getElementById('ScheduleEndTime').value;
+                                const startDate = document.getElementById('ScheduleStartDate').value;
+                                const endDate = document.getElementById('ScheduleEndDate').value;
+
+                                if (startTime && endTime && startTime >= endTime) {
+                                    e.preventDefault();
+                                    alert('End time must be after start time');
+                                    return;
+                                }
+
+                                if (startDate && endDate && startDate > endDate) {
+                                    e.preventDefault();
+                                    alert('End date must be after start date');
+                                }
+                            });
+                        </script>
+
+                        <%- include('partials/footer') %>
