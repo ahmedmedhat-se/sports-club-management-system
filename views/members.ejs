@@ -34,7 +34,7 @@
                             <td><%= m.MemberStartDate ? new Date(m.MemberStartDate).toLocaleDateString() : '-' %></td>
                             <td class="actions">
                                 <a href="/members?action=edit&id=<%= m.MemberId %>" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="/members/delete?_method=DELETE&id=<%= m.MemberId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this member?')">
+                                <form action="/members/delete?id=<%= m.MemberId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this member?')">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
@@ -132,22 +132,22 @@
                 <h2>Edit Member #<%= member.MemberId %></h2>
                 <a href="/members" class="btn btn-secondary">Back</a>
             </div>
-            <form action="/members/update?_method=PUT&id=<%= member.MemberId %>" method="POST" id="memberForm">
-                <input type="hidden" name="AddressId" value="<%= member.AddressId %>">
+            <form action="/members/update?id=<%= member.MemberId %>" method="POST">
+                <input type="hidden" name="AddressId" value="<%= member.AddressId || '' %>">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MemberFirstName">First Name *</label>
-                        <input type="text" id="MemberFirstName" name="MemberFirstName" value="<%= member.MemberFirstName %>" required maxlength="50" class="form-control">
+                        <input type="text" id="MemberFirstName" name="MemberFirstName" value="<%= member.MemberFirstName || '' %>" required maxlength="50" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="MemberLastName">Last Name *</label>
-                        <input type="text" id="MemberLastName" name="MemberLastName" value="<%= member.MemberLastName %>" required maxlength="50" class="form-control">
+                        <input type="text" id="MemberLastName" name="MemberLastName" value="<%= member.MemberLastName || '' %>" required maxlength="50" class="form-control">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MemberEmail">Email *</label>
-                        <input type="email" id="MemberEmail" name="MemberEmail" value="<%= member.MemberEmail %>" required class="form-control">
+                        <input type="email" id="MemberEmail" name="MemberEmail" value="<%= member.MemberEmail || '' %>" required class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="MemberPhoneNumber">Phone</label>
@@ -157,15 +157,17 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MemberDateOfBirth">Date of Birth</label>
-                        <input type="date" id="MemberDateOfBirth" name="MemberDateOfBirth" value="<%= member.MemberDateOfBirth ? member.MemberDateOfBirth.split('T')[0] : '' %>" class="form-control">
+                        <input type="date" id="MemberDateOfBirth" name="MemberDateOfBirth" value="<%= member.MemberDateOfBirth ? new Date(member.MemberDateOfBirth).toISOString().split('T')[0] : '' %>" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="MembershipTypeId">Membership Type</label>
                         <select id="MembershipTypeId" name="MembershipTypeId" class="form-control">
                             <option value="">Select Membership</option>
-                            <% membershipTypes.forEach(t => { %>
-                                <option value="<%= t.MembershipTypeId %>" <%= member.MembershipTypeId == t.MembershipTypeId ? 'selected' : '' %>><%= t.MembershipTypeName %></option>
-                            <% }) %>
+                            <% if (membershipTypes) { %>
+                                <% membershipTypes.forEach(t => { %>
+                                    <option value="<%= t.MembershipTypeId %>" <%= member.MembershipTypeId == t.MembershipTypeId ? 'selected' : '' %>><%= t.MembershipTypeName %></option>
+                                <% }) %>
+                            <% } %>
                         </select>
                     </div>
                 </div>
@@ -180,12 +182,12 @@
                     </div>
                     <div class="form-group">
                         <label for="MemberStartDate">Start Date *</label>
-                        <input type="date" id="MemberStartDate" name="MemberStartDate" value="<%= member.MemberStartDate ? member.MemberStartDate.split('T')[0] : '' %>" required class="form-control">
+                        <input type="date" id="MemberStartDate" name="MemberStartDate" value="<%= member.MemberStartDate ? new Date(member.MemberStartDate).toISOString().split('T')[0] : '' %>" required class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="MemberEndDate">End Date</label>
-                    <input type="date" id="MemberEndDate" name="MemberEndDate" value="<%= member.MemberEndDate ? member.MemberEndDate.split('T')[0] : '' %>" class="form-control">
+                    <input type="date" id="MemberEndDate" name="MemberEndDate" value="<%= member.MemberEndDate ? new Date(member.MemberEndDate).toISOString().split('T')[0] : '' %>" class="form-control">
                 </div>
                 <h3 style="margin-top:20px; margin-bottom:15px; color:#555;">Address</h3>
                 <div class="form-row">
@@ -200,7 +202,7 @@
                 </div>
                 <div class="form-group">
                     <label for="City">City *</label>
-                    <input type="text" id="City" name="City" value="<%= member.City %>" required maxlength="100" class="form-control">
+                    <input type="text" id="City" name="City" value="<%= member.City || '' %>" required maxlength="100" class="form-control">
                 </div>
                 <div class="form-actions">
                     <a href="/members" class="btn btn-secondary">Cancel</a>

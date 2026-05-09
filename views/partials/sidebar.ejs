@@ -1,38 +1,38 @@
 <aside class="sidebar">
     <div class="sidebar-header">
-        <h2>🏆 Sports Club</h2>
+        <h2><i class="fas fa-trophy"></i> Sports Club</h2>
     </div>
     <nav class="sidebar-nav">
         <a href="/" class="nav-item <%= path === '/' ? 'active' : '' %>">
-            <span class="nav-icon">📊</span>
+            <i class="fas fa-th-large"></i>
             Dashboard
         </a>
         <a href="/members" class="nav-item <%= path && path.startsWith('/members') ? 'active' : '' %>">
-            <span class="nav-icon">👥</span>
+            <i class="fas fa-users"></i>
             Members
         </a>
         <a href="/trainers" class="nav-item <%= path && path.startsWith('/trainers') ? 'active' : '' %>">
-            <span class="nav-icon">👨‍🏫</span>
+            <i class="fas fa-chalkboard-teacher"></i>
             Trainers
         </a>
         <a href="/activities" class="nav-item <%= path && path.startsWith('/activities') ? 'active' : '' %>">
-            <span class="nav-icon">⚽</span>
+            <i class="fas fa-futbol"></i>
             Activities
         </a>
         <a href="/facilities" class="nav-item <%= path && path.startsWith('/facilities') ? 'active' : '' %>">
-            <span class="nav-icon">🏟️</span>
+            <i class="fas fa-building"></i>
             Facilities
         </a>
         <a href="/schedules" class="nav-item <%= path && path.startsWith('/schedules') ? 'active' : '' %>">
-            <span class="nav-icon">📅</span>
+            <i class="fas fa-calendar-alt"></i>
             Schedules
         </a>
         <a href="/reservations" class="nav-item <%= path && path.startsWith('/reservations') ? 'active' : '' %>">
-            <span class="nav-icon">📝</span>
+            <i class="fas fa-bookmark"></i>
             Reservations
         </a>
         <a href="/participations" class="nav-item <%= path && path.startsWith('/participations') ? 'active' : '' %>">
-            <span class="nav-icon">✅</span>
+            <i class="fas fa-check-circle"></i>
             Participations
         </a>
     </nav>

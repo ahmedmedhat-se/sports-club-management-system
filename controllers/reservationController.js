@@ -58,7 +58,7 @@ class ReservationController {
       res.redirect('/reservations?success=Reservation created successfully');
     } catch (error) {
       console.error('Error:', error);
-      res.redirect('/reservations?error=Failed to create reservation');
+      res.redirect('/reservations?error=' + encodeURIComponent(error.message));
     }
   }
 
@@ -68,7 +68,7 @@ class ReservationController {
       res.redirect('/reservations?success=Reservation updated successfully');
     } catch (error) {
       console.error('Error:', error);
-      res.redirect('/reservations?error=Failed to update reservation');
+      res.redirect('/reservations?error=' + encodeURIComponent(error.message));
     }
   }
 
@@ -78,7 +78,7 @@ class ReservationController {
       res.redirect('/reservations?success=Reservation deleted successfully');
     } catch (error) {
       console.error('Error:', error);
-      res.redirect('/reservations?error=Failed to delete reservation');
+      res.redirect('/reservations?error=' + encodeURIComponent(error.message));
     }
   }
 }

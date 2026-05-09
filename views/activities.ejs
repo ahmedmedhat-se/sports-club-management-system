@@ -14,9 +14,10 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Duration</th>
-                    <th>Price</th>
+                    <th>Max Capacity</th>
+                    <th>Fee</th>
                     <th>Difficulty</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -26,20 +27,21 @@
                         <tr>
                             <td><%= activity.ActivityId %></td>
                             <td><%= activity.ActivityName %></td>
-                            <td><%= activity.ActivityDescription?.substring(0, 50) || '-' %>...</td>
-                            <td><%= activity.ActivityDuration || '-' %></td>
-                            <td>$<%= activity.ActivityPrice || '0' %></td>
-                            <td><span class="badge badge-info"><%= activity.ActivityDifficultyLevel || 'N/A' %></span></td>
+                            <td><%= activity.ActivityDescription ? activity.ActivityDescription.substring(0, 50) + '...' : '-' %></td>
+                            <td><%= activity.MaxCapacity %></td>
+                            <td>$<%= activity.ActivityFee %></td>
+                            <td><span class="badge badge-info"><%= activity.LevelName || 'N/A' %></span></td>
+                            <td><span class="badge badge-<%= activity.ActivityStatus.toLowerCase() %>"><%= activity.ActivityStatus %></span></td>
                             <td class="actions">
                                 <a href="/activities?action=edit&id=<%= activity.ActivityId %>" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="/activities/delete?_method=DELETE&id=<%= activity.ActivityId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this activity?')">
+                                <form action="/activities/delete?id=<%= activity.ActivityId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this activity?')">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
                         </tr>
                     <% }) %>
                 <% } else { %>
-                    <tr><td colspan="7" class="text-center">No activities found</td></tr>
+                    <tr><td colspan="8" class="text-center">No activities found</td></tr>
                 <% } %>
             </tbody>
         </table>
@@ -63,21 +65,21 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="ActivityDuration">Duration (minutes)</label>
-                        <input type="number" id="ActivityDuration" name="ActivityDuration" min="1" max="480" class="form-control" placeholder="60">
+                        <label for="MaxCapacity">Max Capacity *</label>
+                        <input type="number" id="MaxCapacity" name="MaxCapacity" min="1" value="20" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="ActivityPrice">Price ($)</label>
-                        <input type="number" id="ActivityPrice" name="ActivityPrice" min="0" step="0.01" class="form-control" placeholder="0.00">
+                        <label for="ActivityFee">Fee ($)</label>
+                        <input type="number" id="ActivityFee" name="ActivityFee" min="0" step="0.01" value="0.00" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="ActivityDifficultyLevel">Difficulty Level</label>
-                    <select id="ActivityDifficultyLevel" name="ActivityDifficultyLevel" class="form-control">
+                    <label for="DifficultyLevelId">Difficulty Level</label>
+                    <select id="DifficultyLevelId" name="DifficultyLevelId" class="form-control">
                         <option value="">Select Level</option>
                         <% if (difficultyLevels) { %>
                             <% difficultyLevels.forEach(level => { %>
-                                <option value="<%= level %>"><%= level %></option>
+                                <option value="<%= level.DifficultyLevelId %>"><%= level.LevelName %></option>
                             <% }) %>
                         <% } %>
                     </select>
@@ -97,7 +99,7 @@
                 <h2>Edit Activity #<%= activity.ActivityId %></h2>
                 <a href="/activities" class="btn btn-secondary">Back</a>
             </div>
-            <form action="/activities/update?_method=PUT&id=<%= activity.ActivityId %>" method="POST" id="activityForm">
+            <form action="/activities/update?id=<%= activity.ActivityId %>" method="POST" id="activityForm">
                 <div class="form-group">
                     <label for="ActivityName">Activity Name *</label>
                     <input type="text" id="ActivityName" name="ActivityName" value="<%= activity.ActivityName %>" required maxlength="100" class="form-control">
@@ -108,22 +110,31 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="ActivityDuration">Duration (minutes)</label>
-                        <input type="number" id="ActivityDuration" name="ActivityDuration" value="<%= activity.ActivityDuration || '' %>" min="1" max="480" class="form-control">
+                        <label for="MaxCapacity">Max Capacity *</label>
+                        <input type="number" id="MaxCapacity" name="MaxCapacity" value="<%= activity.MaxCapacity %>" min="1" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="ActivityPrice">Price ($)</label>
-                        <input type="number" id="ActivityPrice" name="ActivityPrice" value="<%= activity.ActivityPrice || '' %>" min="0" step="0.01" class="form-control">
+                        <label for="ActivityFee">Fee ($)</label>
+                        <input type="number" id="ActivityFee" name="ActivityFee" value="<%= activity.ActivityFee %>" min="0" step="0.01" class="form-control">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="ActivityDifficultyLevel">Difficulty Level</label>
-                    <select id="ActivityDifficultyLevel" name="ActivityDifficultyLevel" class="form-control">
-                        <option value="">Select Level</option>
-                        <% difficultyLevels.forEach(level => { %>
-                            <option value="<%= level %>" <%= activity.ActivityDifficultyLevel === level ? 'selected' : '' %>><%= level %></option>
-                        <% }) %>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="DifficultyLevelId">Difficulty Level</label>
+                        <select id="DifficultyLevelId" name="DifficultyLevelId" class="form-control">
+                            <option value="">Select Level</option>
+                            <% difficultyLevels.forEach(level => { %>
+                                <option value="<%= level.DifficultyLevelId %>" <%= activity.DifficultyLevelId == level.DifficultyLevelId ? 'selected' : '' %>><%= level.LevelName %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ActivityStatus">Status</label>
+                        <select id="ActivityStatus" name="ActivityStatus" class="form-control">
+                            <option value="Active" <%= activity.ActivityStatus === 'Active' ? 'selected' : '' %>>Active</option>
+                            <option value="Inactive" <%= activity.ActivityStatus === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-actions">
                     <a href="/activities" class="btn btn-secondary">Cancel</a>

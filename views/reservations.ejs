@@ -32,7 +32,7 @@
                             <td><span class="badge badge-<%= r.ReservationStatus.toLowerCase() %>"><%= r.ReservationStatus %></span></td>
                             <td class="actions">
                                 <a href="/reservations?action=edit&id=<%= r.ReservationId %>" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="/reservations/delete?_method=DELETE&id=<%= r.ReservationId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this reservation?')">
+                                <form action="/reservations/delete?id=<%= r.ReservationId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this reservation?')">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
@@ -60,7 +60,7 @@
                             <option value="">Select Member</option>
                             <% if (members) { %>
                                 <% members.forEach(m => { %>
-                                    <option value="<%= m.MemberId %>"><%= m.MemberFirstName %> <%= m.MemberLastName %></option>
+                                    <option value="<%= m.MemberId %>"><%= m.MemberName %></option>
                                 <% }) %>
                             <% } %>
                         </select>
@@ -95,8 +95,9 @@
                     <label for="ReservationStatus">Status</label>
                     <select id="ReservationStatus" name="ReservationStatus" class="form-control">
                         <option value="Confirmed">Confirmed</option>
-                        <option value="Pending">Pending</option>
+                        <option value="Pending" selected>Pending</option>
                         <option value="Cancelled">Cancelled</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
                 <div class="form-actions">
@@ -114,23 +115,21 @@
                 <h2>Edit Reservation #<%= reservation.ReservationId %></h2>
                 <a href="/reservations" class="btn btn-secondary">Back</a>
             </div>
-            <form action="/reservations/update?_method=PUT&id=<%= reservation.ReservationId %>" method="POST" id="reservationForm">
+            <form action="/reservations/update?id=<%= reservation.ReservationId %>" method="POST" id="reservationForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MemberId">Member *</label>
                         <select id="MemberId" name="MemberId" required class="form-control">
-                            <option value="">Select Member</option>
                             <% members.forEach(m => { %>
-                                <option value="<%= m.MemberId %>" <%= reservation.MemberId === m.MemberId ? 'selected' : '' %>><%= m.MemberFirstName %> <%= m.MemberLastName %></option>
+                                <option value="<%= m.MemberId %>" <%= reservation.MemberId == m.MemberId ? 'selected' : '' %>><%= m.MemberName %></option>
                             <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="FacilityId">Facility *</label>
                         <select id="FacilityId" name="FacilityId" required class="form-control">
-                            <option value="">Select Facility</option>
                             <% facilities.forEach(f => { %>
-                                <option value="<%= f.FacilityId %>" <%= reservation.FacilityId === f.FacilityId ? 'selected' : '' %>><%= f.FacilityName %></option>
+                                <option value="<%= f.FacilityId %>" <%= reservation.FacilityId == f.FacilityId ? 'selected' : '' %>><%= f.FacilityName %></option>
                             <% }) %>
                         </select>
                     </div>
@@ -152,9 +151,10 @@
                 <div class="form-group">
                     <label for="ReservationStatus">Status</label>
                     <select id="ReservationStatus" name="ReservationStatus" class="form-control">
-                        <option value="Confirmed" <%= reservation.ReservationStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
                         <option value="Pending" <%= reservation.ReservationStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="Confirmed" <%= reservation.ReservationStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
                         <option value="Cancelled" <%= reservation.ReservationStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        <option value="Completed" <%= reservation.ReservationStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
                     </select>
                 </div>
                 <div class="form-actions">

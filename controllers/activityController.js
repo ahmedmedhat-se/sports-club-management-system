@@ -49,19 +49,35 @@ class ActivityController {
 
   static async create(req, res) {
     try {
-      await Activity.create(req.body);
+      const data = {
+        ActivityName: req.body.ActivityName,
+        DifficultyLevelId: req.body.DifficultyLevelId || null,
+        MaxCapacity: req.body.MaxCapacity,
+        ActivityFee: req.body.ActivityFee,
+        ActivityDescription: req.body.ActivityDescription,
+        ActivityStatus: 'Active'
+      };
+      await Activity.create(data);
       res.redirect('/activities?success=Activity created successfully');
     } catch (error) {
-      res.redirect('/activities?error=Failed to create activity');
+      res.redirect('/activities?error=' + encodeURIComponent(error.message));
     }
   }
 
   static async update(req, res) {
     try {
-      await Activity.update(req.query.id, req.body);
+      const data = {
+        ActivityName: req.body.ActivityName,
+        DifficultyLevelId: req.body.DifficultyLevelId || null,
+        MaxCapacity: req.body.MaxCapacity,
+        ActivityFee: req.body.ActivityFee,
+        ActivityDescription: req.body.ActivityDescription,
+        ActivityStatus: req.body.ActivityStatus
+      };
+      await Activity.update(req.query.id, data);
       res.redirect('/activities?success=Activity updated successfully');
     } catch (error) {
-      res.redirect('/activities?error=Failed to update activity');
+      res.redirect('/activities?error=' + encodeURIComponent(error.message));
     }
   }
 
@@ -70,7 +86,7 @@ class ActivityController {
       await Activity.delete(req.query.id);
       res.redirect('/activities?success=Activity deleted successfully');
     } catch (error) {
-      res.redirect('/activities?error=Failed to delete activity');
+      res.redirect('/activities?error=' + encodeURIComponent(error.message));
     }
   }
 }
