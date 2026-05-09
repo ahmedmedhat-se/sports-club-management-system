@@ -30,7 +30,7 @@
                             <td><span class="badge badge-<%= (facility.FacilityStatus || 'available').toLowerCase() %>"><%= facility.FacilityStatus || 'Available' %></span></td>
                             <td class="actions">
                                 <a href="/facilities?action=edit&id=<%= facility.FacilityId %>" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="/facilities/delete?_method=DELETE&id=<%= facility.FacilityId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this facility?')">
+                                <form action="/facilities/delete?id=<%= facility.FacilityId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this facility?')">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
@@ -54,6 +54,10 @@
                 <div class="form-group">
                     <label for="FacilityName">Facility Name *</label>
                     <input type="text" id="FacilityName" name="FacilityName" required maxlength="100" class="form-control" placeholder="Enter facility name">
+                </div>
+                <div class="form-group">
+                    <label for="FacilityLocation">Location</label>
+                    <input type="text" id="FacilityLocation" name="FacilityLocation" maxlength="150" class="form-control" placeholder="Enter location">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -87,10 +91,14 @@
                 <h2>Edit Facility #<%= facility.FacilityId %></h2>
                 <a href="/facilities" class="btn btn-secondary">Back</a>
             </div>
-            <form action="/facilities/update?_method=PUT&id=<%= facility.FacilityId %>" method="POST" id="facilityForm">
+            <form action="/facilities/update?id=<%= facility.FacilityId %>" method="POST" id="facilityForm">
                 <div class="form-group">
                     <label for="FacilityName">Facility Name *</label>
                     <input type="text" id="FacilityName" name="FacilityName" value="<%= facility.FacilityName %>" required maxlength="100" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="FacilityLocation">Location</label>
+                    <input type="text" id="FacilityLocation" name="FacilityLocation" value="<%= facility.FacilityLocation || '' %>" maxlength="150" class="form-control">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -98,7 +106,7 @@
                         <select id="FacilityTypeId" name="FacilityTypeId" class="form-control">
                             <option value="">Select Type</option>
                             <% facilityTypes.forEach(type => { %>
-                                <option value="<%= type.FacilityTypeId %>" <%= facility.FacilityTypeId === type.FacilityTypeId ? 'selected' : '' %>><%= type.FacilityTypeName %></option>
+                                <option value="<%= type.FacilityTypeId %>" <%= facility.FacilityTypeId == type.FacilityTypeId ? 'selected' : '' %>><%= type.FacilityTypeName %></option>
                             <% }) %>
                         </select>
                     </div>
@@ -111,7 +119,7 @@
                     <label for="FacilityStatus">Status</label>
                     <select id="FacilityStatus" name="FacilityStatus" class="form-control">
                         <option value="Available" <%= facility.FacilityStatus === 'Available' ? 'selected' : '' %>>Available</option>
-                        <option value="Maintenance" <%= facility.FacilityStatus === 'Maintenance' ? 'selected' : '' %>>Maintenance</option>
+                        <option value="Under Maintenance" <%= facility.FacilityStatus === 'Under Maintenance' ? 'selected' : '' %>>Under Maintenance</option>
                         <option value="Closed" <%= facility.FacilityStatus === 'Closed' ? 'selected' : '' %>>Closed</option>
                     </select>
                 </div>

@@ -34,7 +34,7 @@
                             <td><span class="badge badge-<%= trainer.TrainerStatus.toLowerCase() %>"><%= trainer.TrainerStatus %></span></td>
                             <td class="actions">
                                 <a href="/trainers?action=edit&id=<%= trainer.TrainerId %>" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="/trainers/delete?_method=DELETE&id=<%= trainer.TrainerId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this trainer?')">
+                                <form action="/trainers/delete?id=<%= trainer.TrainerId %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this trainer?')">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
@@ -107,7 +107,7 @@
                 <h2>Edit Trainer #<%= trainer.TrainerId %></h2>
                 <a href="/trainers" class="btn btn-secondary">Back</a>
             </div>
-            <form action="/trainers/update?_method=PUT&id=<%= trainer.TrainerId %>" method="POST" id="trainerForm">
+            <form action="/trainers/update?id=<%= trainer.TrainerId %>" method="POST" id="trainerForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="TrainerFirstName">First Name *</label>
@@ -134,7 +134,7 @@
                         <select id="SpecializationId" name="SpecializationId" class="form-control">
                             <option value="">Select Specialization</option>
                             <% specializations.forEach(spec => { %>
-                                <option value="<%= spec.SpecializationId %>" <%= trainer.SpecializationId === spec.SpecializationId ? 'selected' : '' %>><%= spec.SpecializationName %></option>
+                                <option value="<%= spec.SpecializationId %>" <%= trainer.SpecializationId == spec.SpecializationId ? 'selected' : '' %>><%= spec.SpecializationName %></option>
                             <% }) %>
                         </select>
                     </div>
